@@ -5,7 +5,7 @@ import soundfile as sf
 
 # Filtro Digital FIR
 N = 100  # Orden del filtro
-fm = 44100  # Frecuencia de Muestreo 16KHz
+fm = 44100  # Frecuencia de Muestreo 44.1 KHz
 fc = 4000  # Frecuencia de Corte 4KHz
 fN = fc / fm # Frecuencia Normalizada
 

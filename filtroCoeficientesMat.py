@@ -13,7 +13,7 @@ fN = fc / fm # Frecuencia Normalizada
 win = np.loadtxt("coeficientesAsimetric245.txt")
 #win = signal.windows.hamming(N)
 # Cargar el audio
-audio, sample_rate = sf.read('Audios\Rodrigo.wav') 
+audio, sample_rate = sf.read('Audios\Vian_EnciendeLaLuz.wav') 
 
 # Graficar coeficientes
 plt.figure(1,figsize=(12, 6))
@@ -39,7 +39,7 @@ plt.show()
 filtered_audio = signal.lfilter(win,1,audio) 
 
 # Guardar el audio filtrado en un nuevo archivo
-sf.write('audio_filtrado_coeficientes.wav', filtered_audio, sample_rate)
+sf.write('Vian_audio_filtrado_coeficientes.wav', filtered_audio, sample_rate)
 
 # GRAFICAR
 # Crear un arreglo de tiempo para la visualización
