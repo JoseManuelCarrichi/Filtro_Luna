@@ -14,7 +14,7 @@ audio, sample_rate = sf.read('Audios\EnciendeLaLuz.wav')
 filtered_audio = signal.lfilter(win,1,audio)
 
 # Guardar el audio filtrado en un nuevo archivo
-sf.write('Vian_audio_filtrado_coeficientes.wav', filtered_audio, sample_rate)
+sf.write('Output_Audio\Filtered_audio.wav', filtered_audio, sample_rate)
 
 frame_length = 100  # Longitud de la ventana
 frame_overlap = 50  # Superposición entre ventanas (ajusta según tus necesidades)
@@ -42,6 +42,9 @@ for i in range(num_frames):
 #print(lpc_coeffs_per_frame)
 print(sum_lpc_per_frame)
 
+# Crear un arreglo de tiempo para la visualización
+t = np.arange(0, len(filtered_audio)) / sample_rate
+
 # Visualización de los resultados
 plt.figure(figsize=(12,8))
 plt.subplot(2,1,1)
@@ -51,8 +54,8 @@ plt.ylabel("Suma de coeficientes")
 plt.tight_layout()
 
 plt.subplot(2,1,2)
-plt.plot(filtered_audio)
-plt.xlabel("Muestras")
+plt.plot(t,filtered_audio)
+plt.xlabel("Tiempo")
 plt.ylabel("Amplitud")
 plt.tight_layout()
 plt.show()
@@ -65,8 +68,6 @@ std_dev_sum = np.std(sum_lpc_per_frame)
 # Establecer el umbral dinámico (por ejemplo, 2 veces la desviación estándar por encima de la media)
 threshold_dynamic = mean_sum + std_dev_sum
 print(f"Threshold: {threshold_dynamic}")
-
-# ... (código anterior)
 
 # Identificar regiones de interés basadas en el umbral dinámico y la concentración de sumas
 regions_of_interest_dynamic = []
@@ -82,19 +83,26 @@ for i, sum_of_coeffs in enumerate(sum_lpc_per_frame):
         count_below_threshold_dynamic += 1
 
         # Verificar si se cumple la condición de 5 frames consecutivos por debajo del umbral
-        if count_below_threshold_dynamic >= 25 and start_index_dynamic is not None:
+        if count_below_threshold_dynamic >= 45 and start_index_dynamic is not None:
             # Guardar la región de interés y reiniciar variables
             regions_of_interest_dynamic.append((start_index_dynamic, i))
             start_index_dynamic = None
             count_below_threshold_dynamic = 0
 print(regions_of_interest_dynamic)
 # Extraer y guardar fragmentos de audio basados en el umbral dinámico
+count = 1
+concatenated_audio = np.array([])  # Inicializar el array para el audio concatenado
 for start_dynamic, end_dynamic in regions_of_interest_dynamic:
     start_dynamic = start_dynamic * frame_overlap
     end_dynamic = end_dynamic * frame_overlap + frame_length
     audio_clip_dynamic = filtered_audio[start_dynamic:end_dynamic]
+    #Concatenar las muestras
+    concatenated_audio = np.concatenate([concatenated_audio, audio_clip_dynamic])
     # Guardar el fragmento de audio como archivo
-    sf.write(f'Audios{start_dynamic}_{end_dynamic}.wav', audio_clip_dynamic, sample_rate)
+    sf.write(f'Output_Audio\Audios{start_dynamic}_{end_dynamic}_{count}.wav', audio_clip_dynamic, sample_rate)
+    count += 1
+# Guardar el audio concatenado como archivo
+sf.write('Output_Audio\Voice_clips.wav', concatenated_audio, sample_rate)
 
 # Visualización de los resultados con matplotlib
 plt.figure(figsize=(12, 8))
@@ -110,6 +118,7 @@ plt.axhline(y=threshold_dynamic, color='green', linestyle='--', label='Umbral Di
 
 # Marcar las regiones de interés basadas en el umbral dinámico en verde
 for start_dynamic, end_dynamic in regions_of_interest_dynamic:
+    plt.axvspan(start_dynamic, end_dynamic, color='red', alpha=0.3)
     plt.axvline(x=start_dynamic, color='red', linestyle='-', alpha=0.5)
     plt.axvline(x=end_dynamic, color='red', linestyle='-', alpha=0.5)
 

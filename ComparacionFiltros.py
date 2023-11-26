@@ -43,7 +43,7 @@ magnitude2 = 20 * np.log10(np.abs(response2))
 
 plt.figure()
 plt.plot(frequencies, magnitude, label = "Hamming")
-plt.plot(frequencies2, magnitude2, label= "Filtro propesto" )
+plt.plot(frequencies2, magnitude2, label= "Filtro propuesto" )
 plt.xlabel('Frecuencia (Hz)')
 plt.ylabel('Magnitud (dB)')
 plt.grid()
