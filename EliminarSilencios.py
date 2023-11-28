@@ -3,7 +3,7 @@ import numpy as np
 import soundfile as sf
 
 # Lectura del audio
-Audio, sample_rate = sf.read('Audios/Vian_EnciendeLaLuz.wav') 
+Audio, sample_rate = sf.read('Audios/Audio2.wav') 
 
 #tam = len(Audio)
 yn = Audio**2 # Calcular la energía de la señal
@@ -20,19 +20,45 @@ YnenNoise = yne[np.where(yne <= aux1)[0]]
 
 
 plt.figure()
+plt.title('Señal de entrada excluyendo los mínimos')
 plt.plot(YnenNoise)
 plt.show()
 
 hyne, _ = np.histogram(YnenNoise, bins=10) #Obtiene el histograma de la señal
 
 Ind1, Ind2, Ind3 = np.argsort(hyne)[-3:]
+
+#Graficar el histograma
+plt.figure()
+plt.plot(hyne,color='green')
+plt.bar(range(len(hyne)),hyne)
+plt.title('Hitograma inicial')
+plt.show()
+
 hyne[Ind1] = 0
+
+#Graficar el histograma
+plt.figure()
+plt.plot(hyne,color='green')
+plt.bar(range(len(hyne)),hyne)
+plt.title('Hitograma sin el 1er valor más repetido')
+plt.show()
+
 hyne[Ind2] = 0
+
+#Graficar el histograma
+plt.figure()
+plt.plot(hyne,color='green')
+plt.bar(range(len(hyne)),hyne)
+plt.title('Hitograma sin el 2do valor más repetido')
+plt.show()
+
 hyne[Ind3] = 0
 
 
 #Graficar el histograma
 plt.figure()
+plt.plot(hyne,color='green')
 plt.bar(range(len(hyne)),hyne)
 plt.title('Hitograma modificado')
 plt.show()
@@ -43,6 +69,13 @@ Q = ((-((10 - Ind1) + 0.5) + aux1)+ (-((10 - Ind2) + 0.5) + aux1)+ (-((10 - Ind3
 audio = Q +aux
 #k3 = (Q - (audio*(0.375/3)))+1
 k3 = (Q - (audio*(0.375/1.6)))
+
+plt.figure()
+plt.plot(yne)
+plt.axhline(k3)
+plt.title('Señal en escala logaritmica vs umbral')
+plt.show()
+
 Humbralk3 = np.zeros(len(Audio))
 Humbralk3[yne>=k3] = 1 # Los valores que superan el humbral se colocan en 1
 
@@ -57,17 +90,20 @@ for s in range(aux - 1):
 # Graficar el humbralk3
 plt.figure()
 plt.plot(Humbralk3)
+plt.title('Vector de la señal recuperada sobre el Humbral')
 plt.show()
 
 AudioClean = Audio[Humbralk3 > 0]
 
 plt.figure()
 plt.plot(AudioClean)
+plt.title('Audio sin silencios')
 plt.show()
 
 plt.figure()
 plt.plot(Audio)
 plt.plot(Humbralk3)
+plt.title('Regiones vocalizadas')
 plt.show()
 
 # Guardar el audio final
