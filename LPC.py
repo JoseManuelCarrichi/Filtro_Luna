@@ -9,7 +9,7 @@ win = np.loadtxt("coeficientesAsimetric245.txt")
 #win = signal.windows.hamming(N)
 # Cargar el audio
 audio, sample_rate = sf.read('Audios\EnciendeLaLuz.wav')
-
+print(audio[0])
 # Aplicar el filtro al audio
 filtered_audio = signal.lfilter(win,1,audio)
 
@@ -65,7 +65,7 @@ plt.show()
 mean_sum = np.mean(sum_lpc_per_frame)
 std_dev_sum = np.std(sum_lpc_per_frame)
 
-# Establecer el umbral dinámico (por ejemplo, 2 veces la desviación estándar por encima de la media)
+# Establecer el umbral dinámico 
 threshold_dynamic = mean_sum + std_dev_sum
 print(f"Threshold: {threshold_dynamic}")
 
@@ -82,7 +82,7 @@ for i, sum_of_coeffs in enumerate(sum_lpc_per_frame):
     else:
         count_below_threshold_dynamic += 1
 
-        # Verificar si se cumple la condición de 5 frames consecutivos por debajo del umbral
+        # Verificar si se cumple la condición de 45 frames consecutivos por debajo del umbral
         if count_below_threshold_dynamic >= 45 and start_index_dynamic is not None:
             # Guardar la región de interés y reiniciar variables
             regions_of_interest_dynamic.append((start_index_dynamic, i))
