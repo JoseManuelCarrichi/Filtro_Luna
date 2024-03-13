@@ -3,7 +3,7 @@ import numpy as np
 import soundfile as sf
 
 def VAD(filePath):
-    # Vrificar canales de audio
+    # Verificar canales de audio
     infoAudio = sf.info(filePath)
     if(infoAudio.channels == 2):
         # Lectura del audio
@@ -76,8 +76,9 @@ def VAD(filePath):
     
     audio = Q +aux
     #k3 = (Q - (audio*(0.375/3)))+1
-    k3 = (Q - (audio*(0.375/1.6)))
+    #k3 = (Q - (audio*(0.375/1.6)))
     #k3 = (Q - (audio*(0.375/2.3)))
+    k3 = (Q - (audio*(0.375/2)))
    
     
     plt.figure()
@@ -93,13 +94,13 @@ def VAD(filePath):
     aux = len(r)
     contador = 1
     for s in range(aux - 1):
-        if (r[s + 1] - r[s]) <= 1000:
+        if (r[s + 1] - r[s]) <= 7500:
             Humbralk3[r[s]:r[s + 1] + 1] = 1 
             #sf.write(f'Output_Audio/segmento {contador}.wav',Humbralk3[r[s]:r[s + 1] + 1],sample_rate)
             #contador += 1
             
 
-    AudioAux = np.copy(Audio)
+    AudioAux = np.copy(Audio) 
     AudioAux[Humbralk3 == 0] = 0
     
     fig, ax = plt.subplots(figsize=(16, 8), dpi=600)  
